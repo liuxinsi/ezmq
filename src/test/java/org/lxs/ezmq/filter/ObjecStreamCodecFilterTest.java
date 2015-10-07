@@ -4,7 +4,6 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.io.IOException;
 
 /**
  * @author akalxs@gmail.com
@@ -24,12 +23,8 @@ public class ObjecStreamCodecFilterTest {
 
     @Test
     public void testEncode() {
-        try {
-            data = cf.encode(tb);
-            Assert.assertNotNull(data);
-        } catch (IOException e) {
-            Assert.fail(e.getMessage());
-        }
+        data = cf.encode(tb);
+        Assert.assertNotNull(data);
     }
 
     @Test
@@ -37,11 +32,7 @@ public class ObjecStreamCodecFilterTest {
         if (data == null) {
             testEncode();
         }
-        try {
-            Object o = cf.decode(data);
-            Assert.assertTrue(((TestBean) o).b.equals(tb.b));
-        } catch (IOException | ClassNotFoundException e) {
-            Assert.fail(e.getMessage());
-        }
+        Object o = cf.decode(data);
+        Assert.assertTrue(((TestBean) o).b.equals(tb.b));
     }
 }

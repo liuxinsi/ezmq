@@ -4,7 +4,6 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.io.IOException;
 
 /**
  * @author akalxs@gmail.com
@@ -24,12 +23,8 @@ public class ProtobufCodecFilterTest {
 
     @Test
     public void testEncode() {
-        try {
-            data = cf.encode(tb);
-            Assert.assertNotNull(data);
-        } catch (IOException e) {
-            Assert.fail(e.getMessage());
-        }
+        data = cf.encode(tb);
+        Assert.assertNotNull(data);
     }
 
     @Test
@@ -37,11 +32,7 @@ public class ProtobufCodecFilterTest {
         if (data == null) {
             testEncode();
         }
-        try {
-            AddressBookProtos.AddressBook ab = (AddressBookProtos.AddressBook) cf.decode(data);
-            Assert.assertTrue(tb.getPeople(0).getName().equals(ab.getPeople(0).getName()));
-        } catch (IOException | ClassNotFoundException e) {
-            Assert.fail(e.getMessage());
-        }
+        AddressBookProtos.AddressBook ab = (AddressBookProtos.AddressBook) cf.decode(data);
+        Assert.assertTrue(tb.getPeople(0).getName().equals(ab.getPeople(0).getName()));
     }
 }

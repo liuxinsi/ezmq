@@ -1,10 +1,11 @@
 package org.lxs.ezmq.filter;
 
+import com.google.protobuf.InvalidProtocolBufferException;
 import com.google.protobuf.MessageLite;
+import org.lxs.ezmq.ex.CodecDecodeException;
+import org.lxs.ezmq.ex.CodecEncodeException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.io.IOException;
 
 /**
  * @author akalxs@gmail.com
@@ -18,7 +19,7 @@ public class ProtobufCodecFilter implements CodecFilter {
     }
 
     @Override
-    public byte[] encode(Object obj) throws IOException {
+    public byte[] encode(Object obj) {
         LOG.trace("encode object :{}.", obj);
 
         byte[] data = new byte[0];
@@ -29,17 +30,23 @@ public class ProtobufCodecFilter implements CodecFilter {
             data = ((MessageLite.Builder) obj).build().toByteArray();
         }
         if (data == null) {
-            throw new IOException("unsupport protobuf encode");
+            throw new CodecEncodeException("unsupport protobuf encode");
         }
         LOG.trace("encoded object :{} to bytes:{}", obj, data.length);
         return data;
     }
 
     @Override
-    public Object decode(byte[] data) throws IOException, ClassNotFoundException {
+    public Object decode(byte[] data) {
         LOG.trace("decode bytes:{}", data.length);
 
-        Object obj = protobufType.getParserForType().parseFrom(data);
+        Object obj;
+        try {
+            obj = protobufType.getParserForType().parseFrom(data);
+        } catch (InvalidProtocolBufferException e) {
+            LOG.error(e.getMessage(), e);
+            throw new CodecDecodeException(e);
+        }
         LOG.trace("decoded object:{} from byte:{}.", obj, data.length);
         return obj;
     }
